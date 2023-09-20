@@ -8,6 +8,7 @@
 #include "MyBugAlgorithm.h"
 
 using namespace amp;
+using namespace std;
 
 int main(int argc, char** argv) {
 
@@ -17,20 +18,20 @@ int main(int argc, char** argv) {
     Problem2D problem = HW2::getWorkspace1();
 
     // Use WO1 from Exercise 2
-    /*
-    Problem2D problem = HW2::getWorkspace2();
-    */
+    
+   // Problem2D problem = HW2::getWorkspace2();
+    
 
     // Make a random environment spec, edit properties about it such as the number of obstacles
-    /*
+    
     Random2DEnvironmentSpecification spec;
     spec.max_obstacle_region_radius = 5.0;
-    spec.n_obstacles = 2;
+    spec.n_obstacles = 1;
     spec.path_clearance = 0.01;
     spec.d_sep = 0.01;
-    Randomly generate the environment;
-    Problem2D problem = EnvironmentTools::generateRandom(spec); // Random environment
-    */
+    //Randomly generate the environment;
+    //Problem2D problem = EnvironmentTools::generateRandom(spec, 30); // Random environment
+    
 
     // Declare your algorithm object 
     MyBugAlgorithm algo;
@@ -48,8 +49,8 @@ int main(int argc, char** argv) {
     Visualizer::showFigures();
 
     // Let's get crazy and generate a random environment and test your algorithm
-    bool random_trial_success = HW2::generateAndCheck(algo);
-    LOG("Found valid solution in random environment: " << (random_trial_success ? "Yes!" : "No :("));
+    //bool random_trial_success = HW2::generateAndCheck(algo);
+    //LOG("Found valid solution in random environment: " << (random_trial_success ? "Yes!" : "No :("));
 
     return 0;
 }

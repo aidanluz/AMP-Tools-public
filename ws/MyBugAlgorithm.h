@@ -10,6 +10,7 @@ class MyBugAlgorithm : public amp::BugAlgorithm {
         virtual amp::Path2D plan(const amp::Problem2D& problem) const override;
 
         // Add any other methods here...
+        bool detect_collision(std::vector<amp::Polygon> obstacles, Eigen::Vector2d& curr_pos, double prevx, double prevy, bool on_object, int curr_int_ob_num, int& int_ob_num, int& int_edge_num) const;
     
     private:
         // Add any member variables here...

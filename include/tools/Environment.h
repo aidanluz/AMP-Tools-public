@@ -57,7 +57,7 @@ struct Random2DEnvironmentSpecification {
     uint32_t n_obstacles = 20; 
 
     /// @brief Max number of vertices in an obstalce before convex hull. Increase for more circular obstacles
-    uint32_t max_obstacle_vertices = 7;
+    uint32_t max_obstacle_vertices = 4;
     /// @brief Largest obstacle region. Increase for larger convex obstacles
     double max_obstacle_region_radius = 2.0;
     /// @brief Smallest obstacle region. Decrease for smaller obstacles and more narrow paths
