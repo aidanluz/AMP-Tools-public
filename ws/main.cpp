@@ -32,26 +32,27 @@ int main(int argc, char** argv) {
     //Randomly generate the environment;
     //Problem2D problem = EnvironmentTools::generateRandom(spec, 30); // Random environment
     //Problem2D problem = EnvironmentTools::generateRandom(spec, 8);
-    srand((unsigned int)time(NULL));
-    Problem2D problem = EnvironmentTools::generateRandom(spec, rand());
-    // Declare your algorithm object 
-    MyBugAlgorithm algo;
-    
-    // Call your algorithm on the generated problem
-    amp::Path2D path = algo.plan(problem);
+    for(int i = 0; i < 10; i++){
+        srand((unsigned int)time(NULL));
+        Problem2D problem = EnvironmentTools::generateRandom(spec, rand());
+        // Declare your algorithm object 
+        MyBugAlgorithm algo;
+        
+        // Call your algorithm on the generated problem
+        amp::Path2D path = algo.plan(problem);
 
-    // Check your path to make sure that it does not collide with the environment 
-    bool success = HW2::check(path, problem);
+        // Check your path to make sure that it does not collide with the environment 
+        bool success = HW2::check(path, problem);
 
-    LOG("Found valid solution to workspace 1: " << (success ? "Yes!" : "No :("));
+        LOG("Found valid solution to workspace 1: " << (success ? "Yes!" : "No :("));
 
-    // Visualize the path and environment
-    Visualizer::makeFigure(problem, path);
-    Visualizer::showFigures();
-
-    // Let's get crazy and generate a random environment and test your algorithm
-    //bool random_trial_success = HW2::generateAndCheck(algo);
-    //LOG("Found valid solution in random environment: " << (random_trial_success ? "Yes!" : "No :("));
+        // Visualize the path and environment
+        Visualizer::makeFigure(problem, path);
+        Visualizer::showFigures();
+    }
+        // Let's get crazy and generate a random environment and test your algorithm
+        //bool random_trial_success = HW2::generateAndCheck(algo);
+        //LOG("Found valid solution in random environment: " << (random_trial_success ? "Yes!" : "No :("));
 
     return 0;
 }

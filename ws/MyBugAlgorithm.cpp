@@ -6,7 +6,7 @@ using namespace std;
 
 // Implement your methods in the `.cpp` file, for example:
 amp::Path2D MyBugAlgorithm::plan(const amp::Problem2D& problem) const {
-    return bug2(problem);
+    return bug1(problem);
 }
 
 amp::Path2D MyBugAlgorithm::bug1(const amp::Problem2D& problem) const{
@@ -410,8 +410,8 @@ amp::Path2D MyBugAlgorithm::bug2(const amp::Problem2D& problem) const{
             Eigen::Vector2d prev_pos;
             prev_pos[0] = prevx;
             prev_pos[1] = prevy;
+
             if(curr_pos[0] == 100 || curr_pos[1] == 100){
-                
                 curr_pos = prev_pos + step_size*to_next_vertex/to_next_vertex.norm();
             }
 
