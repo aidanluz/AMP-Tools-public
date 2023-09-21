@@ -9,9 +9,12 @@ class MyBugAlgorithm : public amp::BugAlgorithm {
         // Override and implement the bug algorithm in the plan method. The methods are declared here in the `.h` file
         virtual amp::Path2D plan(const amp::Problem2D& problem) const override;
 
+        virtual amp::Path2D bug1(const amp::Problem2D& problem) const;
+        virtual amp::Path2D bug2(const amp::Problem2D& problem) const;
+
         // Add any other methods here...
         bool detect_collision(std::vector<amp::Polygon> obstacles, Eigen::Vector2d& curr_pos, double prevx, double prevy, bool on_object, int curr_int_ob_num, int& int_ob_num, int& int_edge_num) const;
-    
+        double path_length(amp::Path2D path) const;
     private:
         // Add any member variables here...
 };

@@ -6,6 +6,10 @@ using namespace std;
 
 // Implement your methods in the `.cpp` file, for example:
 amp::Path2D MyBugAlgorithm::plan(const amp::Problem2D& problem) const {
+    return bug2(problem);
+}
+
+amp::Path2D MyBugAlgorithm::bug1(const amp::Problem2D& problem) const{
 
     // Your algorithm solves the problem and generates a path. Here is a hard-coded to path for now...
     amp::Path2D path; //initialize path
@@ -25,38 +29,30 @@ amp::Path2D MyBugAlgorithm::plan(const amp::Problem2D& problem) const {
     for(int i = 0; i < ob_num; i++){
         
         vertices = (problem.obstacles[i]).verticesCCW();
-        //vertices = (problem.obstacles[i]).verticesCW();
-        //vertices.pop_back();
+        if(vertices[0][0] == vertices[vertices.size()-1][0] && vertices[0][1] == vertices[vertices.size()-1][1]){
+            vertices = (problem.obstacles[i]).verticesCW();
+            vertices.pop_back();
+        }
+
         center[0] = 0;
         center[1] = 0;
 
         for(int j = 0; j < vertices.size(); j++){
             center = center + vertices[j];
-            if(i == 0){
+            /*if(i == 0){
                 cout << "Object " << i << endl;
                 cout << "Vertex " << j << endl;
                 cout << vertices[j] << endl << endl;
-            }
+            }*/
         }
 
         center = center/(vertices.size());
 
         for(int j = 0; j < vertices.size(); j++){
 
-            center_offset = center-vertices[j];
-            double offx = center_offset[0];
-            double offy = center_offset[1];
-            if(offx < 0){
-                vertices[j][0] = vertices[j][0] + step_size;
-            }else if(offx > 0){
-                vertices[j][0] = vertices[j][0] - step_size;
-            }
-            
-            if(offy < 0){
-                vertices[j][1] = vertices[j][1] + step_size;
-            }else if(offy > 0){
-                vertices[j][1] = vertices[j][1] - step_size;
-            }
+            //center_offset = center-vertices[j];
+            center_offset = vertices[j]-center;
+            vertices[j] = vertices[j] + 2*step_size*center_offset/center_offset.norm();
         }
 
         amp::Polygon object = amp::Polygon(vertices);
@@ -182,9 +178,19 @@ amp::Path2D MyBugAlgorithm::plan(const amp::Problem2D& problem) const {
                 curr_pos = next_vertex;
                 x = curr_pos[0];
                 y = curr_pos[1];
+
+
                 
-                next_vert_num = (next_vert_num-1)%int_vertices.size(); //update vertex that the bug is moving towards
+                //next_vert_num = (next_vert_num-1)%int_vertices.size(); //update vertex that the bug is moving towards
+                next_vert_num = next_vert_num-1;
+
+                if(next_vert_num < 0){
+                    
+                    next_vert_num = int_vertices.size()-1;
+                }
+                
                 vert_count++;
+                
             }
 
             if(vert_count > 0 && next_vert_num == int_edge_num && curr_ob_num == int_ob_num){ //check if the bug has completed a full loop
@@ -206,7 +212,7 @@ amp::Path2D MyBugAlgorithm::plan(const amp::Problem2D& problem) const {
         prevx = curr_pos[0]; //update previous position variables
         prevy = curr_pos[1]; 
 
-        if(count > 100000){
+        if(count >100000){
             at_goal = true;
         }
         count++;
@@ -216,7 +222,225 @@ amp::Path2D MyBugAlgorithm::plan(const amp::Problem2D& problem) const {
         }
     }
 
+    Eigen::Vector2d rand;
+    rand[0] = 5;
+    rand[1] = 10;
+    //path.waypoints.push_back(rand);
     path.waypoints.push_back(problem.q_goal);
+
+    //path.print();
+
+    cout << "Length = " << path_length(path) << endl << endl;
+
+    return path;
+}
+
+amp::Path2D MyBugAlgorithm::bug2(const amp::Problem2D& problem) const{
+    
+    // Your algorithm solves the problem and generates a path. Here is a hard-coded to path for now...
+    amp::Path2D path; //initialize path
+    path.waypoints.push_back(problem.q_init); //add start point to path
+
+    //std::vector<amp::Polygon> obstacles = problem.obstacles; //extract list of obstacles
+
+    int ob_num = (problem.obstacles).size(); //find number of obstacles
+    double step_size = 0.01; //define distance of each step
+
+    std::vector<amp::Polygon> obstacles;
+    std::vector<Eigen::Vector2d> vertices;
+    Eigen::Vector2d vertex;
+    Eigen::Vector2d center;
+    Eigen::Vector2d center_offset;
+
+    for(int i = 0; i < ob_num; i++){
+        
+        vertices = (problem.obstacles[i]).verticesCCW();
+        if(vertices[0][0] == vertices[vertices.size()-1][0] && vertices[0][1] == vertices[vertices.size()-1][1]){
+            vertices = (problem.obstacles[i]).verticesCW();
+            vertices.pop_back();
+        }
+
+        center[0] = 0;
+        center[1] = 0;
+
+        for(int j = 0; j < vertices.size(); j++){
+            center = center + vertices[j];
+            /*if(i == 0){
+                cout << "Object " << i << endl;
+                cout << "Vertex " << j << endl;
+                cout << vertices[j] << endl << endl;
+            }*/
+        }
+
+        center = center/(vertices.size());
+
+        for(int j = 0; j < vertices.size(); j++){
+
+            //center_offset = center-vertices[j];
+            center_offset = vertices[j]-center;
+            vertices[j] = vertices[j] + 2*step_size*center_offset/center_offset.norm();
+
+        }
+
+        amp::Polygon object = amp::Polygon(vertices);
+
+        obstacles.push_back(object);
+
+    }
+
+
+    /*for(int i = 0; i < ob_num; i++){
+        amp::Polygon ob = obstacles[i];
+        vertices = ob.verticesCCW();
+        cout << i << endl;
+        for(int j = 0; j < vertices.size(); j++){
+            vertex = vertices[j];
+            cout << vertex << endl << endl;
+        }
+    }*/
+
+    //obstacles = problem.obstacles;
+    //((obstacles[0]).verticesCCW()).pop_back();
+
+
+    Eigen::Vector2d curr_pos = problem.q_init; //define a vector storing the bugs current position
+    Eigen::Vector2d to_goal; //define a vector that points from the current position to the goal
+    bool hit = false; //stores whether an obstacle has been hit
+    bool at_goal = false; //stores whether the bug is at the goal
+    bool possible = true; //stores whether we believe the target is reachable
+    double x; //stores current x val
+    double y; //stores current y val
+    double prevx; //stores previous x val
+    double prevy; //stores previous y val
+    amp::Polygon int_ob; //if the bug intersects an obstacle, the obstacle is stored here 
+    int int_ob_num = 0; //the number of the intersected obstacle in the obstacles array
+    int int_edge_num = 0; //the number of the intersected edge of that obstacl
+    std::vector<Eigen::Vector2d> int_vertices; //extract all vertices of the obstacle
+    Eigen::Vector2d next_vertex;
+    int next_vert_num;
+    int vert_count;
+    double tol = step_size/5;
+    int curr_ob_num;
+    Eigen::Vector2d to_next_vertex;
+    int count = 0;
+    double m_slope = (problem.q_goal[1]-problem.q_init[1])/(problem.q_goal[0]-problem.q_init[0]);
+    double m_int = problem.q_goal[1]-m_slope*problem.q_goal[0];
+    double hit_dist;
+    
+
+    //main bug loop, continue until goal is reached or it is determined that it cannot be reached
+    while(!at_goal && possible){
+
+        to_goal = problem.q_goal - curr_pos; //update to goal vector
+
+        if(!hit){ 
+            
+            //the bug did not hit an obstacle
+
+            //bug is not at goal yet
+            curr_pos = curr_pos + step_size*to_goal/to_goal.norm(); //move the bug one step size in the direction of the goal
+            x = curr_pos[0]; //store updated x and y values
+            y = curr_pos[1];
+            hit = detect_collision(obstacles, curr_pos, prevx, prevy, false, 0, int_ob_num, int_edge_num);
+
+            if(hit){
+                int_ob = obstacles[int_ob_num];
+                int_vertices = int_ob.verticesCCW(); //extract all vertices of the obstacle
+                //int_vertices = int_ob.verticesCW();
+                //int_vertices = ob_array[int_ob_num];
+                next_vertex = int_vertices[int_edge_num];
+                to_next_vertex = next_vertex - curr_pos;
+                next_vert_num = int_edge_num;
+                curr_ob_num = int_ob_num;
+                vert_count = 0;
+                hit_dist = (curr_pos-problem.q_goal).norm();
+            }
+
+        }else{
+            //the bug has hit an obstacle
+            //the bug must now loop around the obstacle to find the closest point to the goal
+            int_ob = obstacles[curr_ob_num];
+            int_vertices = int_ob.verticesCCW(); //extract all vertices of the obstacle
+            //int_vertices = int_ob.verticesCW(); 
+            //int_vertices = ob_array[curr_ob_num];
+            next_vertex = int_vertices[next_vert_num];
+            to_next_vertex = next_vertex-curr_pos; //direction vector pointing to next vertex
+
+            //otherwise, continue toward next vertex
+            curr_pos = curr_pos + step_size*to_next_vertex/to_next_vertex.norm(); //move the bug one step size in the direction of the vertex
+            x = curr_pos[0]; //store updated x and y values
+            y = curr_pos[1];
+
+            double curr_dist = (problem.q_goal - curr_pos).norm();
+
+            if(curr_dist < hit_dist &&  ( ( (y-m_slope*x-m_int) < 0 && (prevy-m_slope*prevx-m_int) > 0) || ( (y-m_slope*x-m_int) > 0 && (prevy-m_slope*prevx-m_int) < 0) || y-m_slope*x-m_int == 0)){ //check if the bug has already looped the obstacle once
+
+                hit = false;
+
+            }
+
+            int p_ob_num = curr_ob_num;
+
+            bool new_hit = detect_collision(obstacles, curr_pos, prevx, prevy, true, p_ob_num, curr_ob_num, next_vert_num);
+
+            int_ob = obstacles[curr_ob_num];
+            int_vertices = int_ob.verticesCCW();
+            //int_vertices = int_ob.verticesCW();  //extract all vertices of the obstacle
+            //int_vertices = ob_array[curr_ob_num];
+            next_vertex = int_vertices[next_vert_num];
+    
+            if(to_next_vertex.norm() < step_size/2 && !(((next_vertex - curr_pos).norm() > step_size) && !(curr_pos[0] == 100 && curr_pos[1] == 100))){ //check if the bug is as close as possible to the vertex
+                //set position to the vertex position
+                
+                curr_pos = next_vertex;
+                x = curr_pos[0];
+                y = curr_pos[1];
+
+                //next_vert_num = (next_vert_num-1)%int_vertices.size(); //update vertex that the bug is moving towards
+                next_vert_num = next_vert_num-1;
+
+                if(next_vert_num < 0){
+                    next_vert_num = int_vertices.size()-1;
+                }
+
+                vert_count++;
+                
+            }
+
+            Eigen::Vector2d prev_pos;
+            prev_pos[0] = prevx;
+            prev_pos[1] = prevy;
+            if(curr_pos[0] == 100 || curr_pos[1] == 100){
+                
+                curr_pos = prev_pos + step_size*to_next_vertex/to_next_vertex.norm();
+            }
+
+            
+        }
+
+        path.waypoints.push_back(curr_pos);//add the bugs new position to the path
+        prevx = curr_pos[0]; //update previous position variables
+        prevy = curr_pos[1]; 
+
+        if(count >100000){
+            at_goal = true;
+        }
+        count++;
+        
+        if(to_goal.norm() < step_size/2){ //check if the bug is as close as possible to the goal given the step size
+            at_goal = true; //bug is at goal, exit loop, success
+        }
+    }
+
+    Eigen::Vector2d rand;
+    rand[0] = 5;
+    rand[1] = 10;
+    //path.waypoints.push_back(rand);
+    path.waypoints.push_back(problem.q_goal);
+
+    //path.print();
+
+    cout << "Length = " << path_length(path) << endl << endl;
 
     return path;
 }
@@ -249,6 +473,7 @@ bool MyBugAlgorithm::detect_collision(std::vector<amp::Polygon> obstacles, Eigen
                 //extract vertices and their corresponding x and y coordinates
                 Eigen::Vector2d v1 = vertices[j]; 
                 Eigen::Vector2d v2 = vertices[(j+1)%vert_num];
+
                 double x1 = v1[0];
                 double y1 = v1[1];
                 double x2 = v2[0];
@@ -299,14 +524,6 @@ bool MyBugAlgorithm::detect_collision(std::vector<amp::Polygon> obstacles, Eigen
                         }
                     }
 
-                    /*if(x > 2.6 && x < 3 && y > 2.6 && y < 3){
-                        //cout << m << endl;
-                        cout << b << endl;
-                        //cout << x << " " << y << endl;
-                        cout << "outside" << endl;
-                        cout << x1 << " " << x2 << " " << j << endl;
-                        cout << y-m*x << endl << endl;
-                    }*/
 
                 }
                 
@@ -355,17 +572,7 @@ bool MyBugAlgorithm::detect_collision(std::vector<amp::Polygon> obstacles, Eigen
                             x_int_local = x1;
                             y_int_local = m*x_int_local+b;
 
-                            /*if(x_int_local == 12 && y_int_local == 6){
-                                cout << x1 << " " << y1 << endl;
-                                cout << x2 << " " << y2 << endl;
-                                cout << j << endl;
-                            }  */
-                        }/*else{
-                            //find the intersection point of the edge and the path
-                            x_int_local = x1;
-                            y_int_local = y1;
-                            
-                        }*/
+                        }
 
 
                     }else if(x == prevx){ //check if path is vertical
@@ -445,4 +652,19 @@ bool MyBugAlgorithm::detect_collision(std::vector<amp::Polygon> obstacles, Eigen
     } 
 
     return !outside_all_objects;
+}
+
+double MyBugAlgorithm::path_length(amp::Path2D path) const{
+    std::vector<Eigen::Vector2d> waypoints = path.waypoints;
+    Eigen::Vector2d v1;
+    Eigen::Vector2d v2;
+    double length = 0;
+
+    for(int i = 0; i < waypoints.size()-2; i++){
+        v1 = waypoints[i];
+        v2 = waypoints[i+1];
+        length += (v2-v1).norm();
+    }
+
+    return length;
 }

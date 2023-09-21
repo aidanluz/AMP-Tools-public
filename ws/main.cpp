@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     /*    Randomly generate the problem     */ 
 
     // Use WO1 from Exercise 2
-    Problem2D problem = HW2::getWorkspace1();
+    //Problem2D problem = HW2::getWorkspace1();
 
     // Use WO1 from Exercise 2
     
@@ -26,13 +26,14 @@ int main(int argc, char** argv) {
     
     Random2DEnvironmentSpecification spec;
     spec.max_obstacle_region_radius = 5.0;
-    spec.n_obstacles = 1;
+    spec.n_obstacles = 20;
     spec.path_clearance = 0.01;
     spec.d_sep = 0.01;
     //Randomly generate the environment;
     //Problem2D problem = EnvironmentTools::generateRandom(spec, 30); // Random environment
-    
-
+    //Problem2D problem = EnvironmentTools::generateRandom(spec, 8);
+    srand((unsigned int)time(NULL));
+    Problem2D problem = EnvironmentTools::generateRandom(spec, rand());
     // Declare your algorithm object 
     MyBugAlgorithm algo;
     
