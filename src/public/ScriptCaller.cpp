@@ -2,7 +2,6 @@
 #include "public/VarsPublic.h"
 #include "tools/Logging.h"
 
-
 ampprivate::pybridge::PythonObject::PythonObject(PyObject* py_object) : m_py_object{py_object} {
     if (!m_py_object)
         PyErr_Print();
@@ -54,6 +53,7 @@ ampprivate::pybridge::ScriptCaller::_Lifeline::_Lifeline() {
     if (*sys_path) {
         // Add the build directory to the path
         PyList_Append(sys_path->get(), PyUnicode_DecodeFSDefault(AMP_BINARY_DIR));
+        //PyList_Append(sys_path->get(), PyUnicode_DecodeFSDefault(AMP_PYTHONPATH));
     } else {
         PyErr_Print();
     }

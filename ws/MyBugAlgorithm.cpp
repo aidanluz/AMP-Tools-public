@@ -5,11 +5,15 @@
 using namespace std;
 
 // Implement your methods in the `.cpp` file, for example:
+<<<<<<< HEAD
 amp::Path2D MyBugAlgorithm::plan(const amp::Problem2D& problem) const {
     return bug1(problem);
 }
 
 amp::Path2D MyBugAlgorithm::bug1(const amp::Problem2D& problem) const{
+=======
+amp::Path2D MyBugAlgorithm::plan(const amp::Problem2D& problem) {
+>>>>>>> 19425d0be6d0181bfb1502f9c6116b073b5bce82
 
     // Your algorithm solves the problem and generates a path. Here is a hard-coded to path for now...
     amp::Path2D path; //initialize path
